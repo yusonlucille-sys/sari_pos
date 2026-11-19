@@ -1,11 +1,11 @@
+from django.urls import path
+from . import views
 from django.contrib.auth import views as auth_views
 from django.urls import path
-
 from . import views
 
+
 urlpatterns = [
-    path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('', views.pos, name='pos'),
     path('instant-login/', views.instant_login, name='instant_login'),
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
