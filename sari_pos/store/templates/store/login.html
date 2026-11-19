@@ -1,47 +1,29 @@
 {% extends 'store/base.html' %}
-{% block title %}Tuloy Po Kayo | Sari-Sari POS{% endblock %}
+{% block title %}Tuloy Po Kayo | Sari-Sari Enterprise POS{% endblock %}
 {% block content %}
 <div style="min-height: 85vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #d97706 100%);">
   <div style="background: #ffffff; width: 100%; max-width: 440px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2); overflow: hidden; border: 1px solid rgba(255,255,255,0.2);">
     
     <!-- Storefront Header Banner -->
-    <div style="background: linear-gradient(to right, #090d16, #1e293b); padding: 30px 20px; text-align: center; border-bottom: 4px solid #d97706; position: relative;">
-      <div style="background: rgba(217, 119, 6, 0.15); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; border: 2px solid #d97706;">
-        <svg viewBox="0 0 24 24" style="width: 32px; height: 32px; fill: #fbbf24;"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h6v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+    <div style="background: linear-gradient(to right, #090d16, #1e293b); padding: 35px 20px; text-align: center; border-bottom: 4px solid #d97706; position: relative;">
+      <div style="background: rgba(217, 119, 6, 0.15); width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto; border: 2px solid #d97706;">
+        <svg viewBox="0 0 24 24" style="width: 34px; height: 34px; fill: #fbbf24;"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h6v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
       </div>
       <h1 style="color: #ffffff; font-size: 22px; margin: 0 0 6px 0; font-weight: 800; letter-spacing: 0.02em;">SARI-SARI ENTERPRISE</h1>
       <p style="color: #cbd5e1; font-size: 13px; margin: 0; font-weight: 500;">🏪 Tuloy po kayo! Ready for today's transactions.</p>
     </div>
 
-    <!-- Login Body Form -->
-    <div style="padding: 30px;">
-      {% if form.errors %}
-        <div style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; text-align: center; font-weight: 600;">
-          ⚠️ Mali ang username o password. Subukan ulit.
-        </div>
-      {% endif %}
+    <!-- One-Tap Entry Body -->
+    <div style="padding: 35px 30px; text-align: center;">
+      <p style="color: #475569; font-size: 14px; margin-bottom: 24px; font-weight: 500; line-height: 1.5;">
+        Tap below to instantly enter the terminal with full staff clearance. No password required.
+      </p>
 
-      <form method="post" style="display: flex; flex-direction: column; gap: 18px;">
-        {% csrf_token %}
-        
-        <div>
-          <label style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 13px; color: #334155;">Username</label>
-          <div style="position: relative;">
-            <input type="text" name="username" required autofocus placeholder="I-type ang username..." style="width: 100%; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 14px; outline: none; transition: border-color 0.2s;">
-          </div>
-        </div>
-
-        <div>
-          <label style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 13px; color: #334155;">Password</label>
-          <input type="password" name="password" required placeholder="••••••••" style="width: 100%; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 14px; outline: none; transition: border-color 0.2s;">
-        </div>
-
-        <!-- Vibrant Continue / Login Button -->
-        <button type="submit" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; padding: 14px; border-radius: 6px; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); transition: transform 0.1s, background 0.2s; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <span>Mag-continue sa POS</span>
-          <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-        </button>
-      </form>
+      <!-- Direct Button to Instant Login -->
+      <a href="{% url 'instant_login' %}" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; text-decoration: none; padding: 16px 20px; border-radius: 6px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s;">
+        <span>Mag-continue sa POS</span>
+        <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </a>
     </div>
 
     <!-- Footer Note -->
