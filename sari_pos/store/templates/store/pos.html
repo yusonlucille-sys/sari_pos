@@ -1,0 +1,98 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="pos-layout">
+
+  <section class="products-panel">
+    <form method="get" class="search-bar">
+      <input type="text" name="q" value="{{ q }}" placeholder="Search item…" autofocus>
+      <button class="btn">Search</button>
+      <a class="btn ghost" href="{% url 'price_checker' %}">Price Checker</a>
+    </form>
+
+    <div class="grid">
+      {% for p in products %}
+        <div class="card">
+          <h3>{{ p.name }}</h3>
+          <p class="price">₱{{ p.price }}</p>
+          <p class="stock">Stock: {{ p.stock }} {{ p.unit }}</p>
+          <form method="post" action="{% url 'add_to_cart' p.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button class="btn add" {% if not p.stock %}disabled{% endif %}>Add</button>
+          </form>
+        </div>
+      {% empty %}
+        <p class="muted">No items found.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <aside class="cart-panel">
+    <h2>Cart</h2>
+
+    {% if items %}
+      <table class="cart-table">
+        {% for it in items %}
+          <tr>
+            <td>
+              <strong>{{ it.product.name }}</strong><br>
+              <small>₱{{ it.product.price }} each</small>
+            </td>
+            <td>
+              <form method="post" action="{% url 'set_qty' it.product.id %}">
+                {% csrf_token %}
+                <input class="qty" type="number" name="qty" value="{{ it.qty }}"
+                       min="0" max="999" onchange="this.form.submit()">
+              </form>
+            </td>
+            <td class="right">₱{{ it.subtotal }}</td>
+            <td>
+              <form method="post" action="{% url 'remove_from_cart' it.product.id %}">
+                {% csrf_token %}
+                <button class="btn tiny danger">×</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+
+      <div class="total-row">Total <strong>₱{{ total }}</strong></div>
+
+      <form method="post" action="{% url 'checkout' %}" class="checkout-form">
+        {% csrf_token %}
+        <label for="cash">Cash received</label>
+        <input id="cash" type="number" name="cash" step="0.01" min="0" required>
+
+        <div class="change-row">
+          Change: <strong id="change">₱0.00</strong>
+        </div>
+
+        <button class="btn primary wide">Complete Sale</button>
+      </form>
+
+      <form method="post" action="{% url 'clear_cart' %}">
+        {% csrf_token %}
+        <button class="btn ghost wide">Clear Cart</button>
+      </form>
+    {% else %}
+      <p class="muted">Cart is empty. Tap <em>Add</em> on an item.</p>
+    {% endif %}
+  </aside>
+</div>
+
+<script>
+  const TOTAL = parseFloat("{{ total|floatformat:2 }}") || 0;
+  const cashEl = document.getElementById('cash');
+  const changeEl = document.getElementById('change');
+
+  if (cashEl) {
+    cashEl.addEventListener('input', () => {
+      const cash = parseFloat(cashEl.value) || 0;
+      const change = cash - TOTAL;
+      changeEl.textContent = '₱' + (change > 0 ? change : 0).toFixed(2);
+      changeEl.style.color = change < 0 ? '#c0392b' : '#27ae60';
+    });
+    cashEl.focus();
+  }
+</script>
+{% endblock %}

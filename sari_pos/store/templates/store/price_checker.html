@@ -1,0 +1,24 @@
+{% extends 'store/base.html' %}
+{% block title %}Price Checker{% endblock %}
+{% block content %}
+<div class="checker">
+  <h1>Price Checker</h1>
+  <form method="get" class="search-bar big">
+    <input type="text" name="q" value="{{ q }}" placeholder="Type item name…" autofocus>
+    <button class="btn primary">Check</button>
+  </form>
+
+  {% if q %}
+    <div class="results">
+      {% for p in results %}
+        <div class="result-card">
+          <span class="name">{{ p.name }}</span>
+          <span class="big-price">₱{{ p.price }}</span>
+        </div>
+      {% empty %}
+        <p class="muted">No item matched “{{ q }}”.</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

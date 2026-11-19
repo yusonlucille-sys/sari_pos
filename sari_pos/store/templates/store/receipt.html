@@ -1,0 +1,19 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="receipt">
+  <h2>Receipt #{{ sale.id }}</h2>
+  <p class="muted">{{ sale.created_at|date:"M d, Y H:i" }}</p>
+  <hr>
+  {% for it in sale.items.all %}
+    <div class="r-line">
+      <span>{{ it.quantity }} × {{ it.name }}</span>
+      <span>₱{{ it.subtotal }}</span>
+    </div>
+  {% endfor %}
+  <hr>
+  <div class="r-line"><span>Total</span><strong>₱{{ sale.total }}</strong></div>
+  <div class="r-line"><span>Cash</span><span>₱{{ sale.cash }}</span></div>
+  <div class="r-line"><span>Change</span><strong>₱{{ sale.change }}</strong></div>
+  <a class="btn primary wide" href="{% url 'pos' %}">New Sale</a>
+</div>
+{% endblock %}

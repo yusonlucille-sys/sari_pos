@@ -1,0 +1,26 @@
+databases:
+  - name: sari-pos-db
+    plan: free
+    databaseName: sari_pos
+    user: sari_pos
+
+services:
+  - type: web
+    name: sari-pos
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn sari_pos.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sari-pos-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+      - key: WEB_CONCURRENCY
+        value: "2"
