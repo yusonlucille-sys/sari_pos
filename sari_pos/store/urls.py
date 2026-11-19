@@ -1,15 +1,12 @@
-from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Clean login page with no required credential fields
-    path('login/', auth_views.LoginView.as_view(template_name='store/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('instant-login/', views.instant_login, name='instant_login'),
-
-    # Core POS & Management URLs
     path('', views.pos, name='pos'),
+    path('login/', views.instant_login, name='login'),
+    path('instant-login/', views.instant_login, name='instant_login'),
+    path('logout/', views.instant_login, name='logout'),
+
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('set-qty/<int:pk>/', views.set_qty, name='set_qty'),
     path('remove-from-cart/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),

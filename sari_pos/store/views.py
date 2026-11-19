@@ -1,15 +1,13 @@
 from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import F, Value
 from django.db.models.functions import Greatest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.contrib.auth import login
+from django.contrib.auth.models import User
 
 from .models import Product, Sale, SaleItem
 
@@ -41,10 +39,17 @@ def _safe_next(request, fallback="pos"):
 
 
 # ------------------------------------------------------------------
-# POS screen
+# POS screen (Auto-logs in instant user if not authenticated)
 # ------------------------------------------------------------------
-@login_required
 def pos(request):
+    if not request.user.is_authenticated:
+        user, _ = User.objects.get_or_create(
+            username="pos_admin",
+            defaults={"is_staff": True, "is_superuser": True}
+        )
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(request, user)
+
     q = request.GET.get("q", "").strip()
     products = Product.objects.filter(is_active=True)
     if q:
@@ -62,7 +67,6 @@ def pos(request):
 # Cart actions
 # ------------------------------------------------------------------
 @require_POST
-@login_required
 def add_to_cart(request, pk):
     product = get_object_or_404(Product, pk=pk, is_active=True)
     cart = request.session.get("cart", {})
@@ -73,7 +77,6 @@ def add_to_cart(request, pk):
 
 
 @require_POST
-@login_required
 def set_qty(request, pk):
     cart = request.session.get("cart", {})
     key = str(pk)
@@ -90,7 +93,6 @@ def set_qty(request, pk):
 
 
 @require_POST
-@login_required
 def remove_from_cart(request, pk):
     cart = request.session.get("cart", {})
     cart.pop(str(pk), None)
@@ -99,7 +101,6 @@ def remove_from_cart(request, pk):
 
 
 @require_POST
-@login_required
 def clear_cart(request):
     request.session["cart"] = {}
     return redirect("pos")
@@ -109,7 +110,6 @@ def clear_cart(request):
 # Checkout
 # ------------------------------------------------------------------
 @require_POST
-@login_required
 def checkout(request):
     items, total = _cart_items(request)
     if not items:
@@ -140,7 +140,7 @@ def checkout(request):
                 quantity=it["qty"],
                 subtotal=it["subtotal"],
             )
-            if p.stock > 0:  # only decrement if stock is being tracked
+            if p.stock > 0:
                 Product.objects.filter(pk=p.pk).update(
                     stock=Greatest(F("stock") - it["qty"], Value(0))
                 )
@@ -149,7 +149,6 @@ def checkout(request):
     return redirect("receipt", pk=sale.pk)
 
 
-@login_required
 def receipt(request, pk):
     sale = get_object_or_404(
         Sale.objects.prefetch_related("items"), pk=pk
@@ -157,7 +156,6 @@ def receipt(request, pk):
     return render(request, "store/receipt.html", {"sale": sale})
 
 
-@login_required
 def sales_list(request):
     return render(request, "store/sales.html", {
         "sales": Sale.objects.all()[:100],
@@ -167,7 +165,6 @@ def sales_list(request):
 # ------------------------------------------------------------------
 # Price checker
 # ------------------------------------------------------------------
-@login_required
 def price_checker(request):
     q = request.GET.get("q", "").strip()
     results = Product.objects.none()
@@ -179,9 +176,8 @@ def price_checker(request):
 
 
 # ------------------------------------------------------------------
-# Product Management & Auth Helpers
+# Product Management (Instant / No Restrictions)
 # ------------------------------------------------------------------
-@staff_member_required
 def add_product(request):
     if request.method == "POST":
         name = request.POST.get("name")
@@ -200,7 +196,6 @@ def add_product(request):
     return render(request, "store/product_form.html", {"action": "Add"})
 
 
-@login_required
 def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == "POST":
@@ -213,7 +208,6 @@ def edit_product(request, pk):
     return render(request, "store/product_form.html", {"action": "Edit", "product": product})
 
 
-@login_required
 def deactivate_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.is_active = False
@@ -222,14 +216,10 @@ def deactivate_product(request, pk):
 
 
 def instant_login(request):
-    user, created = User.objects.get_or_create(
+    user, _ = User.objects.get_or_create(
         username="pos_admin",
         defaults={"is_staff": True, "is_superuser": True}
     )
-    if created:
-        user.set_password("admin123")
-        user.save()
-    
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     login(request, user)
     return redirect('pos')
