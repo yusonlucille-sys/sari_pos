@@ -1,155 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Sari-Sari POS{% endblock %}</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        nav {
-            background: #002366;
-            color: #fff;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin-right: 15px;
-            font-weight: 500;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        .pos-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .products-panel, .cart-panel, .checker, .receipt {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .card {
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 12px;
-            text-align: center;
-            background: #fff;
-        }
-        .card h3 {
-            font-size: 16px;
-            margin: 0 0 8px 0;
-        }
-        .price {
-            font-weight: bold;
-            color: #002366;
-            margin-bottom: 4px;
-        }
-        .stock {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .btn {
-            background: #002366;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn.primary { background: #002366; }
-        .btn.ghost { background: transparent; color: #002366; border: 1px solid #002366; }
-        .btn.danger { background: #c0392b; color: #fff; padding: 2px 6px; }
-        .btn.wide { width: 100%; padding: 10px; margin-top: 10px; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-        .search-bar {
-            display: flex;
-            gap: 10px;
-        }
-        .search-bar input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .cart-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-        .cart-table td {
-            padding: 8px 4px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .qty {
-            width: 50px;
-            padding: 4px;
-            text-align: center;
-        }
-        .total-row {
-            font-size: 18px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            margin: 15px 0;
-        }
-        .change-row {
-            margin: 10px 0;
-            font-size: 15px;
-        }
-        .muted { color: #888; }
-        table.simple {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            margin-top: 10px;
-        }
-        table.simple th, table.simple td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
-        }
-        .checker, .receipt {
-            max-width: 600px;
-            margin: 30px auto;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Sari-Sari POS{% endblock %}</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { --navy:#17324d; --blue:#2563eb; --ink:#172033; --muted:#64748b; --bg:#f1f5f9; --border:#e2e8f0; --white:#fff; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); }
+    nav { background:var(--navy); color:white; padding:15px clamp(16px,4vw,36px); display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center; box-shadow:0 2px 12px rgba(15,23,42,.15); }
+    nav .brand { font-size:1.05rem; font-weight:800; letter-spacing:.2px; color:white; text-decoration:none; }
+    nav .nav-links { display:flex; gap:8px; flex-wrap:wrap; }
+    nav a.nav-link { text-decoration:none; color:#eaf2ff; padding:9px 12px; border-radius:9px; font-size:.92rem; font-weight:600; }
+    nav a.nav-link:hover, nav a.nav-link.active { background:rgba(255,255,255,.13); color:white; }
+    main { width:min(1440px,100%); margin:0 auto; padding:clamp(14px,3vw,28px); }
+    .pos-layout { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(290px,1fr); gap:22px; align-items:start; }
+    .products-panel,.cart-panel,.checker,.receipt { background:white; padding:clamp(16px,2vw,24px); border:1px solid var(--border); border-radius:16px; box-shadow:0 5px 18px rgba(15,23,42,.045); }
+    .cart-panel { position:sticky; top:16px; }
+    h1,h2 { margin-top:0; color:#0f172a; }
+    h1 { font-size:1.55rem; } h2 { font-size:1.3rem; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin-top:18px; }
+    .card { border:1px solid var(--border); border-radius:12px; padding:15px; background:#fff; text-align:left; transition:box-shadow .15s,transform .15s; }
+    .card:hover { box-shadow:0 6px 18px rgba(15,23,42,.08); transform:translateY(-1px); }
+    .card h3 { font-size:1rem; margin:0 0 9px; }
+    .price,.big-price { color:var(--blue); font-weight:800; font-size:1.08rem; }
+    .stock { color:var(--muted); font-size:.83rem; margin:6px 0 12px; }
+    .btn,button { border:0; border-radius:9px; padding:9px 13px; font:inherit; font-weight:650; background:var(--blue); color:white; cursor:pointer; }
+    .btn:hover,button:hover { filter:brightness(.94); }
+    .btn:disabled,button:disabled { background:#cbd5e1; cursor:not-allowed; }
+    .btn.ghost { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; text-decoration:none; }
+    .btn.danger { background:#dc2626; padding:4px 9px; }
+    .btn.wide { width:100%; margin-top:10px; padding:11px; }
+    .search-bar { display:flex; flex-wrap:wrap; gap:10px; }
+    .search-bar input { flex:1; min-width:150px; padding:10px 12px; border:1px solid #cbd5e1; border-radius:9px; font:inherit; outline:none; }
+    input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+    .cart-table { width:100%; border-collapse:collapse; margin:12px 0 16px; }
+    .cart-table td { padding:9px 4px; border-bottom:1px solid #edf2f7; vertical-align:middle; }
+    .qty { width:60px; padding:6px; border:1px solid var(--border); border-radius:7px; }
+    .total-row { display:flex; justify-content:space-between; align-items:center; font-size:1.1rem; margin:16px 0; }
+    .change-row { margin:12px 0; color:var(--muted); }
+    .muted { color:var(--muted); }
+    table.simple { width:100%; border-collapse:collapse; background:white; margin-top:12px; overflow-x:auto; }
+    table.simple th,table.simple td { padding:11px; border-bottom:1px solid var(--border); text-align:left; }
+    .checker,.receipt { max-width:700px; margin:18px auto; }
+    .result-card { display:flex; justify-content:space-between; gap:12px; padding:14px; background:#f8fafc; border:1px solid var(--border); border-radius:10px; margin-top:10px; }
+    .messages { list-style:none; padding:0; }
+    .messages li { padding:12px; border-radius:10px; background:#fff7ed; border:1px solid #fed7aa; margin:8px 0; }
+    label { display:block; margin-bottom:6px; font-weight:600; }
+    @media(max-width:850px) { .pos-layout { grid-template-columns:1fr; } .cart-panel { position:static; } }
+    @media(max-width:480px) { nav { align-items:flex-start; } nav .nav-links { width:100%; } nav a.nav-link { padding:8px; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  </style>
 </head>
 <body>
-    <nav>
-        <div>
-            <a href="{% url 'pos' %}">🏪 <strong>Sari-Sari POS</strong></a>
-        </div>
-        <div>
-            <a href="{% url 'pos' %}">POS</a>
-            <a href="{% url 'price_checker' %}">Price Checker</a>
-            <a href="{% url 'sales_list' %}">Sales</a>
-            <a href="/admin/">Admin</a>
-        </div>
-    </nav>
-
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+  <nav>
+    <a class="brand" href="{% url 'pos' %}">🏪 Sari-Sari POS</a>
+    <div class="nav-links">
+      <a class="nav-link" href="{% url 'pos' %}">POS</a>
+      <a class="nav-link" href="{% url 'price_checker' %}">Price Checker</a>
+      <a class="nav-link" href="{% url 'sales_list' %}">Sales</a>
+      <a class="nav-link" href="/admin/">Admin</a>
+    </div>
+  </nav>
+  <main>
+    {% if messages %}
+      <ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>
