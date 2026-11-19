@@ -1,4 +1,5 @@
 from decimal import Decimal, InvalidOperation
+
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import F, Value
@@ -9,12 +10,16 @@ from django.views.decorators.http import require_POST
 from .models import Product, Sale, SaleItem
 
 
-# ---------- helpers ----------
+# ------------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------------
 def _cart_items(request):
-    """Return (items, total) for the session cart."""
+    """Resolve the session cart into (items, total). Ignores inactive/missing products."""
     cart = request.session.get("cart", {})
     items, total = [], Decimal("0.00")
-    products = Product.objects.filter(id__in=[int(k) for k in cart], is_active=True)
+    products = Product.objects.filter(
+        id__in=[int(k) for k in cart], is_active=True
+    )
     for p in products:
         qty = cart.get(str(p.id), 0)
         if qty <= 0:
@@ -26,11 +31,14 @@ def _cart_items(request):
 
 
 def _safe_next(request, fallback="pos"):
+    """Redirect to ?next=… if it looks like a local path, else to fallback view name."""
     nxt = request.POST.get("next") or ""
     return nxt if nxt.startswith("/") else fallback
 
 
-# ---------- POS ----------
+# ------------------------------------------------------------------
+# POS screen
+# ------------------------------------------------------------------
 def pos(request):
     q = request.GET.get("q", "").strip()
     products = Product.objects.filter(is_active=True)
@@ -38,10 +46,16 @@ def pos(request):
         products = products.filter(name__icontains=q)
     items, total = _cart_items(request)
     return render(request, "store/pos.html", {
-        "products": products, "q": q, "items": items, "total": total,
+        "products": products,
+        "q": q,
+        "items": items,
+        "total": total,
     })
 
 
+# ------------------------------------------------------------------
+# Cart actions
+# ------------------------------------------------------------------
 @require_POST
 def add_to_cart(request, pk):
     product = get_object_or_404(Product, pk=pk, is_active=True)
@@ -82,7 +96,9 @@ def clear_cart(request):
     return redirect("pos")
 
 
-# ---------- Checkout ----------
+# ------------------------------------------------------------------
+# Checkout
+# ------------------------------------------------------------------
 @require_POST
 def checkout(request):
     items, total = _cart_items(request)
@@ -107,10 +123,14 @@ def checkout(request):
         for it in items:
             p = it["product"]
             SaleItem.objects.create(
-                sale=sale, product=p, name=p.name,
-                price=p.price, quantity=it["qty"], subtotal=it["subtotal"],
+                sale=sale,
+                product=p,
+                name=p.name,
+                price=p.price,
+                quantity=it["qty"],
+                subtotal=it["subtotal"],
             )
-            if p.stock > 0:   # only decrement if stock is tracked
+            if p.stock > 0:  # only decrement if stock is being tracked
                 Product.objects.filter(pk=p.pk).update(
                     stock=Greatest(F("stock") - it["qty"], Value(0))
                 )
@@ -120,18 +140,26 @@ def checkout(request):
 
 
 def receipt(request, pk):
-    sale = get_object_or_404(Sale.objects.prefetch_related("items"), pk=pk)
+    sale = get_object_or_404(
+        Sale.objects.prefetch_related("items"), pk=pk
+    )
     return render(request, "store/receipt.html", {"sale": sale})
 
 
 def sales_list(request):
-    return render(request, "store/sales.html", {"sales": Sale.objects.all()[:100]})
+    return render(request, "store/sales.html", {
+        "sales": Sale.objects.all()[:100],
+    })
 
 
-# ---------- Price checker ----------
+# ------------------------------------------------------------------
+# Price checker
+# ------------------------------------------------------------------
 def price_checker(request):
     q = request.GET.get("q", "").strip()
     results = Product.objects.none()
     if q:
-        results = Product.objects.filter(is_active=True, name__icontains=q)[:30]
+        results = Product.objects.filter(
+            is_active=True, name__icontains=q
+        )[:30]
     return render(request, "store/price_checker.html", {"q": q, "results": results})

@@ -21,16 +21,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+# ------------------------------------------------------------------
+# Security
+# ------------------------------------------------------------------
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me-in-production")
 
-ALLOWED_HOSTS = [h for h in os.environ.get(
-    "ALLOWED_HOSTS", "localhost,127.0.0.1,.onrender.com"
-).split(",") if h]
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
-CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
+ALLOWED_HOSTS = [
+    h for h in os.environ.get(
+        "ALLOWED_HOSTS", "localhost,127.0.0.1,.onrender.com"
+    ).split(",")
+    if h
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    o for o in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS", "https://*.onrender.com"
+    ).split(",")
+    if o
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -64,6 +74,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -78,11 +89,17 @@ WSGI_APPLICATION = 'sari_pos.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# ------------------------------------------------------------------
+# Database
+# ------------------------------------------------------------------
+# Locally: falls back to SQLite if DATABASE_URL is not set.
+# On Render: DATABASE_URL is set automatically → uses PostgreSQL.
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -110,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
