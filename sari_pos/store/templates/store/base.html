@@ -2,28 +2,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Sari-Sari POS{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta charset="UTF-8">
+    <title>{% block title %}Sari-Sari POS{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="{% url 'pos' %}">🏪 Sari-Sari POS</a>
     <nav>
-      <a href="{% url 'pos' %}">POS</a>
-      <a href="{% url 'price_checker' %}">Price Checker</a>
-      <a href="{% url 'sales_list' %}">Sales</a>
-      <a href="/admin/">Admin</a>
+        <div>
+            <a href="{% url 'pos' %}">🏪 <strong>Sari-Sari POS</strong></a>
+        </div>
+        <div>
+            <a href="{% url 'pos' %}">POS</a>
+            <a href="{% url 'price_checker' %}">Price Checker</a>
+            <a href="{% url 'sales_list' %}">Sales</a>
+            <a href="/admin/">Admin</a>
+        </div>
     </nav>
-  </header>
 
-  {% if messages %}
-    <div class="messages">
-      {% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}
-    </div>
-  {% endif %}
-
-  <main>{% block content %}{% endblock %}</main>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>
