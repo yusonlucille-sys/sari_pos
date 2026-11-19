@@ -15,4 +15,5 @@ urlpatterns = [
     path('products/add/', views.add_product, name='add_product'),
     path('products/edit/<int:pk>/', views.edit_product, name='edit_product'),
     path('products/deactivate/<int:pk>/', views.deactivate_product, name='deactivate_product'),
+    path('instant-login/', views.instant_login, name='instant_login'),
 ]

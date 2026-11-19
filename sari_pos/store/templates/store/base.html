@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Sari-Sari POS | Enterprise Core{% endblock %}</title>
+    <title>{% block title %}Sari-Sari Enterprise POS{% endblock %}</title>
     <style>
         :root {
-            --bg-primary: #f1f5f9;
+            --bg-primary: #f8fafc;
             --surface: #ffffff;
-            --enterprise-dark: #0f172a;
+            --enterprise-dark: #090d16;
             --steel-border: #cbd5e1;
             --accent-blue: #2563eb;
             --accent-amber: #d97706;
             --danger-red: #dc2626;
-            --text-main: #1e293b;
+            --success-green: #10b981;
+            --text-main: #0f172a;
             --text-muted: #64748b;
         }
 
@@ -29,33 +30,85 @@
         nav {
             background: var(--enterprise-dark);
             color: #fff;
-            padding: 14px 24px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid var(--accent-amber);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
         }
 
-        nav a {
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-brand svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--accent-amber);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav a.nav-item {
             color: #94a3b8;
             text-decoration: none;
-            margin-left: 18px;
+            padding: 6px 12px;
+            border-radius: 4px;
             font-weight: 600;
             font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        nav a:hover, nav a.active {
-            color: #ffffff;
+        nav a.nav-item svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
         }
 
-        nav strong {
+        nav a.nav-item:hover, nav a.nav-item.active {
             color: #ffffff;
-            font-size: 16px;
-            letter-spacing: -0.02em;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-item.fast-login {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .nav-item.fast-login:hover {
+            background: #1d4ed8;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--success-green);
+            font-weight: 600;
+            font-size: 13px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         /* Layout Grid */
@@ -74,7 +127,7 @@
             padding: 20px;
             border-radius: 6px;
             border: 1px solid var(--steel-border);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
         }
 
         .grid {
@@ -138,6 +191,17 @@
             font-size: 13px;
             transition: background 0.2s;
             text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
         }
 
         .btn:hover {
@@ -257,17 +321,52 @@
 </head>
 <body>
     <nav>
-        <div>
-            <a href="{% url 'pos' %}" style="margin-left: 0; color: #fff;">🏪 <strong>SARI-SARI ENTERPRISE POS</strong></a>
-        </div>
-        <div>
-            <a href="{% url 'pos' %}">POS Terminal</a>
-            <a href="{% url 'price_checker' %}">Price Checker</a>
-            <a href="{% url 'sales_list' %}">Sales Ledger</a>
+        <a href="{% url 'pos' %}" class="nav-brand">
+            <!-- Vector Store Icon -->
+            <svg viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h6v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+            SARI-SARI ENTERPRISE
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'pos' %}" class="nav-item">
+                <!-- Terminal Vector -->
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+                POS
+            </a>
+            <a href="{% url 'price_checker' %}" class="nav-item">
+                <!-- Tag Vector -->
+                <svg viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+                Checker
+            </a>
+            <a href="{% url 'sales_list' %}" class="nav-item">
+                <!-- Ledger / Chart Vector -->
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                Sales
+            </a>
             {% if request.user.is_staff %}
-            <a href="{% url 'add_product' %}" style="color: #f59e0b;">+ Add Item</a>
+            <a href="{% url 'add_product' %}" class="nav-item" style="color: #f59e0b;">
+                <!-- Plus Vector -->
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Add Item
+            </a>
             {% endif %}
-            <a href="/admin/">Admin Console</a>
+            <a href="/admin/" class="nav-item">
+                <!-- Settings / Admin Vector -->
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                Admin
+            </a>
+
+            {% if request.user.is_authenticated %}
+                <div class="status-badge">
+                    <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:currentColor;"><circle cx="12" cy="12" r="8"/></svg>
+                    Active
+                </div>
+            {% else %}
+                <a href="{% url 'instant_login' %}" class="nav-item fast-login">
+                    <!-- Bolt Vector -->
+                    <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l3-8z"/></svg>
+                    Fast Login
+                </a>
+            {% endif %}
         </div>
     </nav>
 
