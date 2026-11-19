@@ -6,7 +6,9 @@ from django.db.models import F, Value
 from django.db.models.functions import Greatest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import Product
 from .models import Product, Sale, SaleItem
 
 
@@ -163,3 +165,39 @@ def price_checker(request):
             is_active=True, name__icontains=q
         )[:30]
     return render(request, "store/price_checker.html", {"q": q, "results": results})
+@staff_member_required
+def add_product(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        price = request.POST.get("price")
+        stock = request.POST.get("stock", 0)
+        unit = request.POST.get("unit", "pcs")
+        if name and price:
+            Product.objects.create(
+                name=name,
+                price=price,
+                stock=stock,
+                unit=unit,
+                is_active=True
+            )
+            return redirect('pos')
+    return render(request, "store/product_form.html", {"action": "Add"})
+
+@staff_member_required
+def edit_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == "POST":
+        product.name = request.POST.get("name")
+        product.price = request.POST.get("price")
+        product.stock = request.POST.get("stock", 0)
+        product.unit = request.POST.get("unit", "pcs")
+        product.save()
+        return redirect('pos')
+    return render(request, "store/product_form.html", {"action": "Edit", "product": product})
+
+@staff_member_required
+def deactivate_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.is_active = False
+    product.save()
+    return redirect('pos')

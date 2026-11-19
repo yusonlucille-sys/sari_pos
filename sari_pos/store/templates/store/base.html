@@ -2,149 +2,272 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Sari-Sari POS{% endblock %}</title>
+    <title>{% block title %}Sari-Sari POS | Enterprise Core{% endblock %}</title>
     <style>
+        :root {
+            --bg-primary: #f1f5f9;
+            --surface: #ffffff;
+            --enterprise-dark: #0f172a;
+            --steel-border: #cbd5e1;
+            --accent-blue: #2563eb;
+            --accent-amber: #d97706;
+            --danger-red: #dc2626;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
             margin: 0;
             padding: 0;
+            font-size: 14px;
         }
+
+        /* Industrial Corporate Navbar */
         nav {
-            background: #002366;
+            background: var(--enterprise-dark);
             color: #fff;
-            padding: 12px 20px;
+            padding: 14px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 3px solid var(--accent-amber);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
         nav a {
-            color: #fff;
+            color: #94a3b8;
             text-decoration: none;
-            margin-right: 15px;
-            font-weight: 500;
+            margin-left: 18px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
         }
-        nav a:hover {
-            text-decoration: underline;
+
+        nav a:hover, nav a.active {
+            color: #ffffff;
         }
+
+        nav strong {
+            color: #ffffff;
+            font-size: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        /* Layout Grid */
         .pos-layout {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 20px;
-            padding: 20px;
-            max-width: 1400px;
+            padding: 24px;
+            max-width: 1500px;
             margin: 0 auto;
         }
+
+        /* Panels & Cards */
         .products-panel, .cart-panel, .checker, .receipt {
-            background: #fff;
+            background: var(--surface);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-radius: 6px;
+            border: 1px solid var(--steel-border);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
         }
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+            margin-top: 16px;
         }
+
         .card {
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 12px;
-            text-align: center;
-            background: #fff;
+            border: 1px solid var(--steel-border);
+            border-radius: 4px;
+            padding: 14px;
+            text-align: left;
+            background: var(--surface);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
+
+        .card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+        }
+
         .card h3 {
-            font-size: 16px;
-            margin: 0 0 8px 0;
+            font-size: 15px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            color: var(--enterprise-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+
         .price {
-            font-weight: bold;
-            color: #002366;
-            margin-bottom: 4px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            font-size: 16px;
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 2px;
         }
+
         .stock {
             font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-variant-numeric: tabular-nums;
         }
+
+        /* Buttons */
         .btn {
-            background: #002366;
+            background: var(--enterprise-dark);
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 4px;
             cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: background 0.2s;
+            text-align: center;
         }
-        .btn.primary { background: #002366; }
-        .btn.ghost { background: transparent; color: #002366; border: 1px solid #002366; }
-        .btn.danger { background: #c0392b; color: #fff; padding: 2px 6px; }
-        .btn.wide { width: 100%; padding: 10px; margin-top: 10px; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .btn:hover {
+            background: #1e293b;
+        }
+
+        .btn.primary { background: var(--accent-blue); }
+        .btn.primary:hover { background: #1d4ed8; }
+
+        .btn.ghost { 
+            background: transparent; 
+            color: var(--enterprise-dark); 
+            border: 1px solid var(--steel-border); 
+        }
+        .btn.ghost:hover { 
+            background: #f8fafc; 
+            border-color: var(--text-muted);
+        }
+
+        .btn.danger { background: var(--danger-red); color: #fff; padding: 4px 8px; }
+        .btn.danger:hover { background: #b91c1c; }
+
+        .btn.wide { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; }
+        .btn:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+
+        /* Search & Inputs */
         .search-bar {
             display: flex;
             gap: 10px;
         }
+
         .search-bar input {
             flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
+            padding: 9px 12px;
+            border: 1px solid var(--steel-border);
             border-radius: 4px;
+            font-size: 14px;
+            outline: none;
         }
+
+        .search-bar input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Cart & Tables */
         .cart-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 15px;
         }
+
         .cart-table td {
-            padding: 8px 4px;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 10px 4px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
         }
+
         .qty {
-            width: 50px;
-            padding: 4px;
+            width: 55px;
+            padding: 5px;
             text-align: center;
+            border: 1px solid var(--steel-border);
+            border-radius: 4px;
+            font-variant-numeric: tabular-nums;
         }
+
         .total-row {
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 700;
             display: flex;
             justify-content: space-between;
-            margin: 15px 0;
+            margin: 16px 0;
+            padding-top: 12px;
+            border-top: 2px dashed var(--steel-border);
+            font-variant-numeric: tabular-nums;
         }
+
         .change-row {
             margin: 10px 0;
-            font-size: 15px;
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
         }
-        .muted { color: #888; }
+
+        .muted { color: var(--text-muted); font-size: 13px; }
+
         table.simple {
             width: 100%;
             border-collapse: collapse;
-            background: #fff;
+            background: var(--surface);
             margin-top: 10px;
+            font-size: 13px;
         }
+
+        table.simple th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--steel-border);
+        }
+
         table.simple th, table.simple td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+            padding: 12px 10px;
+            border-bottom: 1px solid #e2e8f0;
             text-align: left;
+            font-variant-numeric: tabular-nums;
         }
+
         .checker, .receipt {
             max-width: 600px;
-            margin: 30px auto;
+            margin: 40px auto;
         }
     </style>
 </head>
 <body>
     <nav>
         <div>
-            <a href="{% url 'pos' %}">🏪 <strong>Sari-Sari POS</strong></a>
+            <a href="{% url 'pos' %}" style="margin-left: 0; color: #fff;">🏪 <strong>SARI-SARI ENTERPRISE POS</strong></a>
         </div>
         <div>
-            <a href="{% url 'pos' %}">POS</a>
+            <a href="{% url 'pos' %}">POS Terminal</a>
             <a href="{% url 'price_checker' %}">Price Checker</a>
-            <a href="{% url 'sales_list' %}">Sales</a>
-            <a href="/admin/">Admin</a>
+            <a href="{% url 'sales_list' %}">Sales Ledger</a>
+            {% if request.user.is_staff %}
+            <a href="{% url 'add_product' %}" style="color: #f59e0b;">+ Add Item</a>
+            {% endif %}
+            <a href="/admin/">Admin Console</a>
         </div>
     </nav>
 

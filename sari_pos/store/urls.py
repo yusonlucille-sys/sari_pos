@@ -11,4 +11,8 @@ urlpatterns = [
     path("receipt/<int:pk>/", views.receipt, name="receipt"),
     path("sales/", views.sales_list, name="sales_list"),
     path("price-checker/", views.price_checker, name="price_checker"),
+    # Product Management URLs
+    path('products/add/', views.add_product, name='add_product'),
+    path('products/edit/<int:pk>/', views.edit_product, name='edit_product'),
+    path('products/deactivate/<int:pk>/', views.deactivate_product, name='deactivate_product'),
 ]
